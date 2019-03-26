@@ -1,6 +1,6 @@
 {
   "name": "zil-ledger-js-interface",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Interface with Zilliqa Ledger Nano App",
   "main": "index.js",
   "scripts": {
