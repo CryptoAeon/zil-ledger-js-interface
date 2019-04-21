@@ -1,5 +1,6 @@
 const txnEncoder = require('@zilliqa-js/account/dist/util').encodeTransactionProto;
-const { BN, Long } = require('@zilliqa-js/util');
+const {BN, Long} = require('@zilliqa-js/util');
+const {compressPublicKey} = require('@zilliqa-js/crypto/dist/util');
 
 const CLA = 0xe0;
 const INS = {
@@ -11,10 +12,8 @@ const INS = {
 };
 
 function extractResultFromResponse(response) {
-    const sepIdx = response.length - 2;
-    const lenBytes = response.slice(sepIdx);
-    const len = lenBytes.readUIntBE(0, lenBytes.length);
-    return response.slice(0, len).toString('hex');;
+    // 72 is the signature length as defined in the low level nano s syscall
+    return response.slice(0, 72).toString('hex');
 }
 
 /**
@@ -66,7 +65,7 @@ class Zilliqa {
         return this.transport
             .send(CLA, INS.getAddress, P1, P2, payload)
             .then(response => {
-                const publicKey = response.toString("hex");
+                const publicKey = response.toString("hex").slice(0, 32);
                 return {publicKey};
             });
     }
@@ -81,7 +80,7 @@ class Zilliqa {
         return this.transport
             .send(CLA, INS.getPublickKey, P1, P2, payload)
             .then(response => {
-                const pubAddr = response.toString("hex").slice(0, 20);
+                const pubAddr = response.toString("hex").slice(32);
                 return {pubAddr};
             });
     }
@@ -108,7 +107,7 @@ class Zilliqa {
         return this.transport
             .send(CLA, INS.signHash, P1, P2, payload)
             .then(response => {
-                return { sig: extractResultFromResponse(response) }
+                return {sig: extractResultFromResponse(response)}
             });
     }
 
@@ -141,7 +140,7 @@ class Zilliqa {
         return this.transport
             .send(CLA, INS.signTxn, P1, P2, payload)
             .then(response => {
-                return { sig: extractResultFromResponse(response) }
+                return {sig: extractResultFromResponse(response)}
             });
     }
 }
