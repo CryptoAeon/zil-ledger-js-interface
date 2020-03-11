@@ -5,7 +5,7 @@ const {compressPublicKey} = require('@zilliqa-js/crypto/dist/util');
 const CLA = 0xe0;
 const INS = {
     "getVersion": 0x01,
-    "getPublickKey": 0x02,
+    "getPublicKey": 0x02,
     "getAddress": 0x02,
     "signHash": 0x04,
     "signTxn": 0x08
@@ -78,7 +78,7 @@ class Zilliqa {
         payload.writeInt32LE(index);
 
         return this.transport
-            .send(CLA, INS.getPublickKey, P1, P2, payload)
+            .send(CLA, INS.getPublicKey, P1, P2, payload)
             .then(response => {
                 const pubAddr = response.toString("hex").slice(32);
                 return {pubAddr};
